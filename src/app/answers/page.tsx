@@ -164,7 +164,7 @@ export default function Home() {
               <td>{notIdenticalIncorrect}</td>
               <td>
                 {notIdenticalIncorrectAvg
-                  ? notIdenticalCorrectAvg + " ms"
+                  ? notIdenticalIncorrectAvg + " ms"
                   : "0 ms"}
               </td>
               <td>

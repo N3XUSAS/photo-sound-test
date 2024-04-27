@@ -33,8 +33,8 @@ export default function Home() {
   const router = useRouter();
   const [random, setRandom] = useState("");
   const [seen, setSeen] = useState(0);
-  const identical = useRef(10);
-  const notIdentical = useRef(10);
+  const identical = useRef(20);
+  const notIdentical = useRef(20);
   const answeredIdenticalCorrect = useRef(0);
   const answeredIdenticalIncorrect = useRef(0);
   const answeredNotIdenticalCorrect = useRef(0);
@@ -66,7 +66,7 @@ export default function Home() {
       if (
         event.key === "ArrowRight" &&
         prevAudio.current === prevPhoto.current &&
-        reactionTime < 2000
+        reactionTime < 10000
       ) {
         cnt += 1;
         answeredIdenticalCorrectTimes.push(reactionTime);
@@ -75,25 +75,26 @@ export default function Home() {
       } else if (
         event.key === "ArrowRight" &&
         prevAudio.current !== prevPhoto.current &&
-        reactionTime < 2000
+        reactionTime < 10000
       ) {
         cnt += 1;
+
         notIdentical.current -= 1;
-        answeredIdenticalIncorrectTimes.push(reactionTime);
-        answeredIdenticalIncorrect.current += 1;
-      } else if (
-        event.key === "ArrowLeft" &&
-        prevAudio.current === prevPhoto.current &&
-        reactionTime < 2000
-      ) {
-        cnt += 1;
-        identical.current -= 1;
         answeredNotIdenticalIncorrectTimes.push(reactionTime);
         answeredNotIdenticalIncorrect.current += 1;
       } else if (
         event.key === "ArrowLeft" &&
+        prevAudio.current === prevPhoto.current &&
+        reactionTime < 10000
+      ) {
+        cnt += 1;
+        identical.current -= 1;
+        answeredIdenticalIncorrectTimes.push(reactionTime);
+        answeredIdenticalIncorrect.current += 1;
+      } else if (
+        event.key === "ArrowLeft" &&
         prevAudio.current !== prevPhoto.current &&
-        reactionTime < 2000
+        reactionTime < 10000
       ) {
         cnt += 1;
         notIdentical.current -= 1;
@@ -113,7 +114,7 @@ export default function Home() {
       prevAudio.current = random;
       console.log(identical.current, notIdentical.current);
       let other = -1;
-      if (cnt === 20) {
+      if (cnt === 40) {
         localStorage.setItem(
           "data1",
           JSON.stringify(answeredIdenticalCorrectTimes)
@@ -134,20 +135,29 @@ export default function Home() {
       }
       if (random2 === 0 && notIdentical.current > 0) {
         other = Math.floor(Math.random() * 10);
+        while (other === random) {
+          console.log("got into while", random, other);
+          other = Math.floor(Math.random() * 10);
+        }
       } else if (random2 === 1 && identical.current === 0) {
         other = Math.floor(Math.random() * 10);
+        while (other === random) {
+          console.log("got into while", random, other);
+          other = Math.floor(Math.random() * 10);
+        }
       } else if (random2 === 0 && notIdentical.current === 0) {
         other = random;
       } else if (random2 === 1 && identical.current > 0) {
         other = random;
       }
+      console.log("after set", random, other, "chance", random2);
       prevPhoto.current = other;
 
       if (audioRef.current !== undefined) {
         audioRef.current.pause();
       }
       audioRef.current = new Audio(audio[random]);
-      if (cnt < 20) {
+      if (cnt < 40) {
         audioRef.current.play();
       }
 
